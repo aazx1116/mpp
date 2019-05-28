@@ -24,17 +24,17 @@
         android:text="List"/>
 
     <Button
-        android:id="@+id/btnWeekly"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Weekly"/>
-
-    <Button
         android:id="@+id/btnMonthly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Monthly"/>
+
+    <Button
+        android:id="@+id/btnWeekly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Weekly"/>
 
 </LinearLayout>

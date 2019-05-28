@@ -14,12 +14,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button btnList = (Button) findViewById(R.id.btnList);
+        Button btnMonthly = (Button) findViewById(R.id.btnMonthly);
+        Button btnWeekly = (Button) findViewById(R.id.btnWeekly);
+
         btnList.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Monthly.class);
-                startActivity(intent);
+                Intent intentList = new Intent(getApplicationContext(), List.class);
+                startActivity(intentList);
+                finish();
             }
         });
+
+        btnMonthly.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intentMonthly = new Intent(getApplicationContext(), Monthly.class);
+                startActivity(intentMonthly);
+                finish();
+            }
+        });
+
+        btnWeekly.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intentWeekly = new Intent(getApplicationContext(), Weekly.class);
+                startActivity(intentWeekly);
+                finish();
+            }
+        });
+
     }
 }
 
