@@ -1,6 +1,7 @@
 package com.example.mpp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +10,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class Weekly extends AppCompatActivity {
+
+
+    public final String PREFERENCE = "com.example.mpp.sharedpreference";
+    public final String state = "state";
+
+    public void setPreference(String key, int value) {
+        SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,4 +66,9 @@ public class Weekly extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        setPreference(state, 2); // weekly에서 종료시 스테이트 값 2로 반환
+        super.onStop();
+    }
 }

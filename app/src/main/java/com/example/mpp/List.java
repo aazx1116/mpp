@@ -1,10 +1,13 @@
 package com.example.mpp;
 
+import android.app.DatePickerDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -38,6 +42,16 @@ public class List extends AppCompatActivity {
     ArrayList contentList;
     ArrayAdapter adapter;
     ListView listView;
+
+    public final String PREFERENCE = "com.example.mpp.sharedpreference";
+    public final String state = "state";
+
+    public void setPreference(String key, int value) {
+        SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +122,11 @@ public class List extends AppCompatActivity {
             case R.id.action_add:
 
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                String str_date = df.format(new Date());
+                Date date = new Date();
+                String str_date = df.format(date);
+                String str_year = new SimpleDateFormat("yyyy").format(date);
+                String str_month = new SimpleDateFormat("MM").format(date);
+                String str_day = new SimpleDateFormat("dd").format(date);
 
                 dialogView = (View) View.inflate(List.this, R.layout.add_data, null);
                 AlertDialog.Builder dlg = new AlertDialog.Builder(List.this);
@@ -116,6 +134,22 @@ public class List extends AppCompatActivity {
 
                 dataDate = (TextView) dialogView.findViewById(R.id.dataDate);
                 dataDate.setText(str_date);
+
+                DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        dataDate.setText(year + "-" + (month+1) + "-" + day);
+                    }
+                };
+
+                final DatePickerDialog dateDialog = new DatePickerDialog(this, listener, Integer.parseInt(str_year), Integer.parseInt(str_month) - 1, Integer.parseInt(str_day));
+
+                dataDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dateDialog.show();
+                    }
+                });
 
                 dlg.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
@@ -151,4 +185,9 @@ public class List extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        setPreference(state, 0); // List에서 종료시 스테이트 값 0으로 반환
+        super.onStop();
+    }
 }
