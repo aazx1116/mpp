@@ -18,19 +18,19 @@
 
 
     <item
-        android:id="@+id/action_list"
+        android:id="@+id/action_list1"
         android:title="List"
         app:showAsAction="never">
     </item>
 
     <item
-        android:id="@+id/action_monthly"
+        android:id="@+id/action_monthly1"
         android:title="Monthly"
         app:showAsAction="never">
     </item>
 
     <item
-        android:id="@+id/action_weekly"
+        android:id="@+id/action_weekly1"
         android:title="Weekly"
         app:showAsAction="never">
     </item>

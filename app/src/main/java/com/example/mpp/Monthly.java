@@ -8,16 +8,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.CalendarView;
+import android.widget.ListView;
 
 
 public class Monthly extends AppCompatActivity {
 
-    TextView calendarText;
 
     public final String PREFERENCE = "com.example.mpp.sharedpreference";
     public final String state = "state";
 
+    CalendarView calendarView;
+    ListView monthlyListView;
 
     public void setPreference(String key, int value) {
         SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
@@ -31,8 +33,7 @@ public class Monthly extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.monthly);
 
-        calendarText  = (TextView) findViewById(R.id.calendarText);
-
+        calendarView = (CalendarView) findViewById(R.id.monthlyCalendar);
         Toolbar tb = (Toolbar) findViewById(R.id.monthlyBar);
         setSupportActionBar(tb);
     }
@@ -54,14 +55,14 @@ public class Monthly extends AppCompatActivity {
             case R.id.action_search:
                 // 검색을 눌렀을때
                 return true;
-            case R.id.action_list:
+            case R.id.action_list1:
                 Intent intentList = new Intent(getApplicationContext(), List.class);
                 startActivity(intentList);
                 finish();
                 return true;
-            case R.id.action_monthly:
+            case R.id.action_monthly1:
                 return true;
-            case R.id.action_weekly:
+            case R.id.action_weekly1:
                 Intent intentWeekly = new Intent(getApplicationContext(), Weekly.class);
                 startActivity(intentWeekly);
                 finish();

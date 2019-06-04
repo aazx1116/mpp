@@ -41,7 +41,7 @@ public class List extends AppCompatActivity {
     ArrayList titleList;
     ArrayList contentList;
     ArrayAdapter adapter;
-    ListView listView;
+    ListView listListView;
 
     public final String PREFERENCE = "com.example.mpp.sharedpreference";
     public final String state = "state";
@@ -63,10 +63,10 @@ public class List extends AppCompatActivity {
         titleList = new ArrayList();
         contentList = new ArrayList();
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, titleList);
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(adapter);
+        listListView = (ListView) findViewById(R.id.listView1);
+        listListView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 dialogView = (View) View.inflate(List.this, R.layout.view_data, null);
@@ -83,7 +83,7 @@ public class List extends AppCompatActivity {
             }
         });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        listListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder dlg = new AlertDialog.Builder(List.this);
@@ -168,14 +168,14 @@ public class List extends AppCompatActivity {
             case R.id.action_search:
                 // 검색을 눌렀을때는 다른 메소드에서 처리
                 return true;
-            case R.id.action_list:
+            case R.id.action_list1:
                 return true;
-            case R.id.action_monthly:
+            case R.id.action_monthly1:
                 Intent intentMonthly = new Intent(getApplicationContext(), Monthly.class);
                 startActivity(intentMonthly);
                 finish();
                 return true;
-            case R.id.action_weekly:
+            case R.id.action_weekly1:
                 Intent intentWeekly = new Intent(getApplicationContext(), Weekly.class);
                 startActivity(intentWeekly);
                 finish();
