@@ -14,13 +14,13 @@
         android:background="@color/colorPrimary"
         app:title="Monthly"
         app:titleTextColor="#FFFAF0"
-        app:subtitle="Subtitle"
+        app:subtitle="월간 달력으로 표시합니다."
         app:subtitleTextColor="#FAFFF0">
 
     </android.support.v7.widget.Toolbar>
 
     <CalendarView
-        android:id="@+id/calendar"
+        android:id="@+id/monthlyCalendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
@@ -30,13 +30,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/calendarText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="default"/>
         <ListView
             android:layout_width="match_parent"
             android:layout_height="0dp"
