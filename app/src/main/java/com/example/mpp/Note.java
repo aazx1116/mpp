@@ -15,14 +15,34 @@ public class  Note{
         this.noteName = noteName;
         this.myBag = SQLiteDatabase.openOrCreateDatabase("myBag",null);
         this.getDescription();
-
     }
-
-    private void updateDescription(ArrayList<String> newDescription)
+    public Note(String noteName,ArrayList<String> description)
     {
-        this.description = newDescription;
+        this.noteName = noteName;
+        this.myBag = SQLiteDatabase.openOrCreateDatabase("myBag",null);
+        String descriptionStr ="";
+        int numberOfDescription = description.size();
+        for(int i = 0 ; i < numberOfDescription;i++)
+        {
+            descriptionStr += description.get(i) + " TEXT";
+            if(i == 0 )
+                descriptionStr += " PRIMARY KEY";
+            if(i != numberOfDescription - 1)
+                descriptionStr +=",";
+        }
+
+        myBag.rawQuery("CREATE IF NOT EXISTS " + noteName +"("+ descriptionStr +")",null);
+
     }
 
+    public static boolean exists(String noteName)
+    {
+        SQLiteDatabase temp = SQLiteDatabase.openOrCreateDatabase("myBag",null);
+        Cursor tmp = temp.rawQuery("SELECT name FROM sqlite_master WHERE type = \'table\' AND name = \'" + noteName  + "\'",null);
+
+        return tmp.getCount() > 0 ? true:false;
+
+    }
     private ArrayList<String> getDescription()
     {
         ArrayList<String> result= new ArrayList();
@@ -72,10 +92,15 @@ public class  Note{
         return 1;
     }
 
+    public ArrayList<String>getHowToRead()
+    {
+        return description;
+    }
+
     public boolean discardNote()
     {
         try {
-            myBag.execSQL("DROP TABLE IF EXISTS \''" + noteName + "\''");
+            myBag.execSQL("DROP TABLE IF EXISTS \'" + noteName + "\'");
         }
         catch(Exception e)
         {
@@ -134,6 +159,19 @@ public class  Note{
         this.description = newDescription;
         return 1;
     }
+
+    public boolean deleteMemo(String createdTime)
+    {
+        try{
+            myBag.execSQL("DELETE " + noteName + " WHERE " + description.get(0) + " = " + createdTime);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        return true;
+    }
+
     public int retreiveMemo(String createdTime,ArrayList<String> newContents)
     {
         String setStr = null;
@@ -144,21 +182,19 @@ public class  Note{
 
         for(int i = 0 ; i < numberOfDescription ;i++)
         {
-            if(description.get(i) == null)
-                descriptionTmp = "";
-            else
-                descriptionTmp = description.get(i);
+            descriptionTmp = description.get(i);
+
             if(newContents.get(i) == null)
                 contentsTmp = "-";
             else
                 contentsTmp = newContents.get(i);
-            setStr += descriptionTmp + "=" +contentsTmp;
+            setStr += descriptionTmp + "= \'" +contentsTmp +"\'";
             if(i != numberOfDescription - 1)
                 setStr +=",";
         }
 
         try {
-            myBag.execSQL("UPDATE " +noteName+"SET" + setStr);
+            myBag.execSQL("UPDATE " +noteName+" SET " + setStr +" WHERE " + description.get(0) + " = " + createdTime);
         }
         catch (Exception e)
         {
@@ -166,7 +202,6 @@ public class  Note{
         }
         return 1;
     }
-
 
     public class Memo{
         ArrayList<String> descriptions;
