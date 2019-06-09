@@ -6,33 +6,48 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 
 public class  Note{
-    private SQLiteDatabase myBag;
-    private String noteName;
-    private ArrayList<String> description;
-
-    public Note(String noteName)
-    {
-        this.noteName = noteName;
-        this.myBag = SQLiteDatabase.openOrCreateDatabase("myBag",null);
-        this.getDescription();
+    private static SQLiteDatabase myBag;
+    //myBag.rawQuery("CREATE IF NOT EXISTS " + noteName +"("+ descriptionStr +")",null);
+    static {
+        myBag = SQLiteDatabase.openOrCreateDatabase("myBag",null);
+        myBag.execSQL("CREATE TABLE IF NOT EXISTS EMPTY " +
+                "(createdTime TEXT primary Key," +
+                "title TEXT," +
+                "article TEXT)");
+        //tmp.add("createdTime");
+        //tmp.add("title");
+        //mp.add("article");
+        //
+        //
     }
-    public Note(String noteName,ArrayList<String> description)
+
+    public static int createNote(String noteName,ArrayList<String> description)
     {
-        this.noteName = noteName;
-        this.myBag = SQLiteDatabase.openOrCreateDatabase("myBag",null);
-        String descriptionStr ="";
+        String attributeStr ="(";
         int numberOfDescription = description.size();
-        for(int i = 0 ; i < numberOfDescription;i++)
+
+
+        for(int i = 0 ; i < numberOfDescription ;i++)
         {
-            descriptionStr += description.get(i) + " TEXT";
+            attributeStr += description.get(i) + " TEXT ";
             if(i == 0 )
-                descriptionStr += " PRIMARY KEY";
-            if(i != numberOfDescription - 1)
-                descriptionStr +=",";
+            {
+                attributeStr +="PRIMARY KEY,";
+            }
+            if(i < numberOfDescription -1)
+            {
+                attributeStr +=",";
+            }
         }
-
-        myBag.rawQuery("CREATE IF NOT EXISTS " + noteName +"("+ descriptionStr +")",null);
-
+        attributeStr +=")";
+        try {
+            myBag.execSQL("CREATE TABLE IF NOT EXISTS " + noteName + attributeStr +";");
+        }
+        catch(Exception e)
+        {
+            return 0;
+        }
+        return 1;
     }
 
     public static boolean exists(String noteName)
@@ -43,7 +58,7 @@ public class  Note{
         return tmp.getCount() > 0 ? true:false;
 
     }
-    private ArrayList<String> getDescription()
+    private static ArrayList<String> getDescription(String noteName)
     {
         ArrayList<String> result= new ArrayList();
 
@@ -55,13 +70,19 @@ public class  Note{
 
      return result;
     }
-    public Cursor open()
+    public static ArrayList<String> getHowToUse(String noteName)
     {
-         return this.findMemo(null,null);
+        return getDescription(noteName);
     }
 
-    public int writeMemo(ArrayList<String> contexts)
+    public static Cursor open(String noteName)
     {
+         return findMemo(noteName,null,null);
+    }
+
+    public static int writeMemo(String noteName,ArrayList<String> contexts)
+    {
+        ArrayList<String> description = getDescription(noteName);
         String descriptionStr = "";
         String contextStr = "";
         int numberOfContext = description.size();
@@ -77,7 +98,7 @@ public class  Note{
         contextStr+="(";
         for(int  i = 0 ; i < numberOfContext;i++)
         {
-            contextStr +=description.get(i);
+            contextStr +=contexts.get(i);
             if(i != numberOfContext - 1)
                 contextStr +=",";
         }
@@ -92,12 +113,8 @@ public class  Note{
         return 1;
     }
 
-    public ArrayList<String>getHowToRead()
-    {
-        return description;
-    }
 
-    public boolean discardNote()
+    public static boolean discardNote(String noteName)
     {
         try {
             myBag.execSQL("DROP TABLE IF EXISTS \'" + noteName + "\'");
@@ -110,7 +127,7 @@ public class  Note{
         return true;
     }
 
-    public Cursor findMemo(ArrayList<String> field,ArrayList<String> options)
+    public static Cursor findMemo(String noteName,ArrayList<String> field,ArrayList<String> options)
     {
         String fieldStr ="";
         String optionStr ="";
@@ -143,8 +160,9 @@ public class  Note{
 
     }
 
-    public int retreiveNote(ArrayList<String> newDescription)
+    public static int modifyNote(String noteName,ArrayList<String> newDescription)
     {
+        ArrayList<String> description = getDescription(noteName);
         try {
             for(int i = 0 ; i < newDescription.size();i++)
             {
@@ -156,12 +174,13 @@ public class  Note{
         {
             return 0;
         }
-        this.description = newDescription;
+        description = newDescription;
         return 1;
     }
 
-    public boolean deleteMemo(String createdTime)
+    public static boolean deleteMemo(String noteName,String createdTime)
     {
+        ArrayList<String> description = getDescription(noteName);
         try{
             myBag.execSQL("DELETE " + noteName + " WHERE " + description.get(0) + " = " + createdTime);
         }
@@ -172,8 +191,9 @@ public class  Note{
         return true;
     }
 
-    public int retreiveMemo(String createdTime,ArrayList<String> newContents)
+    public static int modifyMemo(String noteName,String createdTime,ArrayList<String> newContents)
     {
+        ArrayList<String> description = getDescription(noteName);
         String setStr = null;
         String descriptionTmp;
         String contentsTmp;

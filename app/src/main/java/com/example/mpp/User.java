@@ -3,7 +3,6 @@ package com.example.mpp;
 import android.database.Cursor;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -14,25 +13,9 @@ public class User {
 
     public User()
     {
-        noteList = new ArrayList();
+
        File file = new File("brain");
-        if(file.exists() == false && Note.exists("EMPTY") == false)
-        {
-            try{
-                FileWriter fw = new FileWriter(file,true);
-                fw.write("EMPTY");
-                ArrayList<String> tmp = new ArrayList();
-                tmp.add("createdTime");
-                tmp.add("title");
-                tmp.add("article");
-                Note temp = new Note("EMPTY",tmp);
-                fw.flush();
-                fw.close();
-            }catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
+
         try{
             Scanner input = new Scanner(file);
             while(input.hasNext())
@@ -46,6 +29,10 @@ public class User {
         }
     }
 
+    public ArrayList<String> getHowToUse(String noteName)
+    {
+        return Note.getHowToUse(noteName);
+    }
 
     public ArrayList<String> getNoteList()
     {
@@ -55,21 +42,34 @@ public class User {
 
     public Cursor readNote(String noteName)
     {
-        return new Note(noteName).open();
+        return Note.open(noteName);
     }
+
+    public ArrayList<String> getMemo(String noteName, String createdTime)
+    {
+        ArrayList<String> temp = new ArrayList();
+        temp.add("createdTime = "+createdTime);
+        Cursor tmp = Note.findMemo(noteName,null,temp);
+        for(int i  = 0 ;!tmp.isAfterLast();i++)
+        {
+            temp.add(tmp.getString(i));
+        }
+        tmp.close();
+        return temp;
+    }
+
     public Cursor getMemosByTime(String noteName, SimpleDateFormat form, SimpleDateFormat to)//YYYY-MM-DD
     {
-        Note temp = new Note(noteName);
 
-        String tmpStr = temp.getHowToRead().get(0);
+        String tmpStr = Note.getHowToUse(noteName).get(0);
         ArrayList<String> timeOptionStr = new ArrayList<String>();
         timeOptionStr.add(tmpStr + " BETWEEN \'"+ form + "\' AND \'" + to + "\'");
 
-        return  temp.findMemo(null, timeOptionStr);
+        return  Note.findMemo(noteName,null, timeOptionStr);
     }
     public Cursor getMemosByString(String noteName, String targetStr,ArrayList<String> field)
     {
-        Note temp = new Note(noteName);
+
         ArrayList<String> options = new ArrayList();
         int numberOfField = field.size();
         for(int i = 0 ;i < numberOfField;i++)
@@ -78,37 +78,34 @@ public class User {
             if(i < numberOfField - 1)
                 options.add(" OR ");
         }
-        return temp.findMemo(field,options);
+        return Note.findMemo(noteName,field,options);
     }
 
-    public void addNote(String noteName, ArrayList<String> description)
+    public int addNote(String noteName, ArrayList<String> description)
     {
-        Note temp = new Note(noteName,description);
-        return;
+        return Note.createNote(noteName,description);
     }
 
     public int addMemo(String noteName, ArrayList<String> contents)
     {
-        Note temp = new Note(noteName);
-        return temp.writeMemo(contents);
+
+        return Note.writeMemo(noteName,contents);
     }
     public int updateNote(String noteName, ArrayList<String> description)
     {
-        Note temp = new Note(noteName);
-        return temp.retreiveNote(description);
+        return Note.modifyNote(noteName,description);
     }
     public int updateMemo(String noteName, ArrayList<String> contents)
     {
-        Note temp = new Note(noteName);
-        return temp.retreiveMemo(contents.get(0),contents);
+        return Note.modifyMemo(noteName,contents.get(0),contents);
     }
     public boolean deleteNote(String noteName)
     {
-        return new Note(noteName).discardNote();
+        return Note.discardNote(noteName);
     }
     public boolean deleteMemo(String noteName,String createdTime)
     {
-        return new Note(noteName).deleteMemo(createdTime);
+        return Note.deleteMemo(noteName,createdTime);
     }
 
 
